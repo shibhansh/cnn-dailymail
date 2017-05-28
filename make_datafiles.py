@@ -123,8 +123,9 @@ def write_to_bin(url_file, out_file, makevocab=False):
 
   if makevocab:
     vocab_counter = collections.Counter()
+  writer_1 = open(out_file+'_summary', 'wb')
 
-  with open(out_file, 'wb') as writer:
+  with open(out_file+'_story', 'wb') as writer:
     for idx,s in enumerate(story_fnames):
       if idx % 1000 == 0:
         print "Writing story %i of %i; %.2f percent done" % (idx, num_stories, float(idx)*100.0/float(num_stories))
@@ -144,6 +145,9 @@ def write_to_bin(url_file, out_file, makevocab=False):
 
       # Get the strings to write to .bin file
       article, abstract = get_art_abs(story_file)
+      writer.write(article+'\n')
+      writer_1.write(abstract+'\n')
+
 
       # Write to tf.Example
       tf_example = example_pb2.Example()
@@ -151,8 +155,8 @@ def write_to_bin(url_file, out_file, makevocab=False):
       tf_example.features.feature['abstract'].bytes_list.value.extend([abstract])
       tf_example_str = tf_example.SerializeToString()
       str_len = len(tf_example_str)
-      writer.write(struct.pack('q', str_len))
-      writer.write(struct.pack('%ds' % str_len, tf_example_str))
+      # writer.write(struct.pack('q', str_len))
+      # writer.write(struct.pack('%ds' % str_len, tf_example_str))
 
       # Write the vocab to file, if applicable
       if makevocab:
@@ -165,6 +169,7 @@ def write_to_bin(url_file, out_file, makevocab=False):
         vocab_counter.update(tokens)
 
   print "Finished writing file %s\n" % out_file
+  writer_1.close()
 
   # write vocab to file
   if makevocab:
