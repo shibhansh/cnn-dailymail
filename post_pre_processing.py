@@ -19,9 +19,17 @@ for file_name in files:
 			temp = temp.replace('\'\'','"')
 			temp = temp.replace('``','"')
 			temp = temp.replace('`','\'')
+			temp = temp.replace(' \' ',' " ')
 			if 'summary' in file_name:
 				temp = temp.replace('<s>','')
-				temp = temp.replace('</s>','')		
+				temp = temp.replace('</s>','')
+				temp = temp.replace('  ',' ')
+				temp = temp.replace('  ',' ')
+			temp = temp.strip()
+			if ' . published : . ' in temp:
+				temp = ' . '.join(temp.split(' . ')[temp.split(' . ').index('published :')+2:])
+			if ' . updated : . ' in temp:
+				temp = ' . '.join(temp.split(' . ')[temp.split(' . ').index('updated :')+2:])
 			temp = temp.split(' ')
 			count=0
 			print index
@@ -47,12 +55,12 @@ for file_name in files:
 		os.system('touch '+sub_dataset_name+'/stories.txt')
 		with open(sub_dataset_name+'/stories.txt', 'w') as f:
 			for story in stories:
-				f.write(story)
+				f.write(story+'\n')
 
 	if 'summary' in file_name:
 		os.system('touch '+sub_dataset_name+'/highlights.txt')
 		with open(sub_dataset_name+'/highlights.txt', 'w') as f:
 			for story in stories:
-				f.write(story)
+				f.write(story+'\n')
 
 
